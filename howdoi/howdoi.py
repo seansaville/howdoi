@@ -10,6 +10,7 @@ terminal.
 
 
 import argparse
+import os.path
 from sys import stdin
 
 from invertedindex import InvertedIndex
@@ -72,12 +73,20 @@ def main():
     args = parser.parse_args()
 
     index = InvertedIndex()
-    index.load_from_file("howdoi.json")
 
-    if args.add:
-        add(index, args.TAGS)
-    else:
-        search(index, args.TAGS)
+    # If the database isn't where we expect it, then save a new one to disk.
+    if not os.path.isfile("howdoi.json"):
+        print("Couldn't find the database, so a new one was created.")
+        index.save_to_file("howdoi.json")
+
+    try:
+        index.load_from_file("howdoi.json")
+        if args.add:
+            add(index, args.TAGS)
+        else:
+            search(index, args.TAGS)
+    except IOError:
+        print("Hit a file-related error somewhere :(")
 
 
 if __name__ == "__main__":
