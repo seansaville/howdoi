@@ -25,7 +25,7 @@ def main(argv):
         for result in results:
             # The term dictionary is keyed by integers, but the JSON serialiser
             # converts these to strings, so treat each document ID as a string.
-            print(index.term_dict[str(result)])
+            print(index.documents[str(result)])
     else:
         print("Couldn't find anything matching those tags!")
 

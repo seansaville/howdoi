@@ -14,14 +14,14 @@ class InvertedIndex(object):
         index - a dictionary of postings lists (mappings of a term to the IDs of
                 the documents it appears in)
 
-        term_dict - a dictionary mapping document IDs to the documents
+        documents - a dictionary mapping document IDs to the documents
                     themselves
 
         next_doc_id - the next available document ID
         """
 
         self.index = {}
-        self.term_dict = {}
+        self.documents = {}
         self.next_doc_id = 0
 
 
@@ -32,7 +32,7 @@ class InvertedIndex(object):
 
         # Add the document to the document store mapping IDs to documents
         doc_id = self.next_doc_id
-        self.term_dict[doc_id] = document
+        self.documents[doc_id] = document
         self.next_doc_id += 1
 
         # Add each term to the postings list for that term (and create one if
@@ -52,7 +52,7 @@ class InvertedIndex(object):
         with open(file_name, 'r') as input_file:
             in_dict = json.loads(input_file.readline())
             self.index = json.loads(in_dict['index'])
-            self.term_dict = json.loads(in_dict['term_dict'])
+            self.documents = json.loads(in_dict['documents'])
             self.next_doc_id = json.loads(in_dict['next_doc_id'])
 
 
@@ -64,7 +64,7 @@ class InvertedIndex(object):
         with open(file_name, 'w') as output_file:
             out_dict = {}
             out_dict['index'] = json.dumps(self.index)
-            out_dict['term_dict'] = json.dumps(self.term_dict)
+            out_dict['documents'] = json.dumps(self.documents)
             out_dict['next_doc_id'] = json.dumps(self.next_doc_id)
             output_file.write(json.dumps(out_dict))
 
