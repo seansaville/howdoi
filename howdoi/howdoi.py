@@ -4,8 +4,8 @@
 """
 howdoi
 
-Search a database of small pieces of information and output the results in the
-terminal.
+Searchable command-line database designed for small pieces of information (e.g.
+terminal commands)
 """
 
 
@@ -16,13 +16,13 @@ from sys import stdin
 from invertedindex import InvertedIndex
 
 
-def add(index, tags):
+def add(index, terms):
     """
-    Add a document, consisting of the concatenation of the tags, to the provided
-    index.
+    Add a document, consisting of the concatenation of the query tags, to the
+    provided inverted index.
     """
 
-    document = " ".join(tags)
+    document = " ".join(terms)
 
     print("I'm going to add \"{}\" to the database.".format(document))
     print("Type some additional tags for this item (separated by spaces). "
@@ -58,10 +58,10 @@ def search(index, tags):
         print("Couldn't find anything matching those tags!")
 
 
-
 def main():
     """
-    Main function for howdoi
+    Main function. Parses command-line arguments and performs the appropriate
+    action.
     """
 
     parser = argparse.ArgumentParser(description="Searchable command-line "

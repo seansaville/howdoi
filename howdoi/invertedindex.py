@@ -6,7 +6,7 @@ import json
 
 class InvertedIndex(object):
     """
-    Inverted Index data structure.
+    Inverted index data structure.
     """
 
     """
@@ -38,23 +38,23 @@ class InvertedIndex(object):
 
     def add_document(self, document, extra_tags):
         """
-        Add a document to the inverted index. Tags it with each word in the
-        query, and optionally with the provided extra tags.
+        Add a document to the inverted index. Tags it with each significant word
+        in the document, and optionally with the provided extra tags.
         """
 
-        # Add the document to the document store mapping IDs to documents
+        # Add the document to the document store
         doc_id = self.next_doc_id
         self.documents[doc_id] = document
         self.next_doc_id += 1
 
-        # Add each occurrence of a term to its postings list (and create a list
-        # if it doesn't exist). Treat the extra tags as if they were just
-        # additional terms.
+        # Add the document ID to the postings list for each of its terms. Treat
+        # the extra tags as if they were extra terms in the document.
         terms = document.split(" ")
         terms.extend(extra_tags)
         for term in terms:
             if term not in InvertedIndex.stop_words:
                 term = term.lower()
+                # If a postings list for this term doesn't exist, create it.
                 if term not in self.index:
                     self.index[term] = []
                 self.index[term].append(doc_id)
@@ -85,17 +85,19 @@ class InvertedIndex(object):
             output_file.write(json.dumps(out_dict))
 
 
-    def search(self, tags):
+    def search(self, terms):
         """
-        Naive search. Finds the postings list for each tag and intersects them,
-        returning the IDs of the documents that are in all of the lists.
+        Naive search. Finds the postings lists for each search term and
+        intersects them, returning the IDs of the documents that are in all of
+        the lists.
         """
 
         postings_lists = []
-        for tag in tags:
-            tag = tag.lower()
-            if tag in self.index:
-                postings_lists.append(self.index[tag])
+        for term in terms:
+            term = term.lower()
+            if term not in InvertedIndex.stop_words:
+                if term in self.index:
+                    postings_lists.append(self.index[term])
 
         if not postings_lists:
             return []
