@@ -36,10 +36,11 @@ class InvertedIndex(object):
         self.next_doc_id = 0
 
 
-    def add_document(self, document, extra_tags):
+    def add_document(self, document, custom_tags):
         """
-        Add a document to the inverted index. Tags it with each significant word
-        in the document, and optionally with the provided extra tags.
+        Add a document to the inverted index. Tags it with either each
+        significant word in the document, or with the custom tags provided if
+        custom_tags is nonempty.
         """
 
         # Add the document to the document store
@@ -47,10 +48,13 @@ class InvertedIndex(object):
         self.documents[doc_id] = document
         self.next_doc_id += 1
 
-        # Add the document ID to the postings list for each of its terms. Treat
-        # the extra tags as if they were extra terms in the document.
-        terms = document.split(" ")
-        terms.extend(extra_tags)
+        # Add the document ID to the postings list for each of its terms. if
+        # custom tags were provided, use those instead.
+        if not custom_tags:
+            terms = document.split(" ")
+        else:
+            terms = custom_tags
+
         for term in terms:
             if term not in InvertedIndex.stop_words:
                 term = term.lower()
@@ -58,6 +62,31 @@ class InvertedIndex(object):
                 if term not in self.index:
                     self.index[term] = []
                 self.index[term].append(doc_id)
+
+
+    def delete_document(self, doc_id):
+        """
+        Delete a document from the inverted index. Returns True if the document
+        existed and was deleted, False otherwise.
+        """
+
+        if doc_id in self.documents:
+            # Remove the document ID from the postings list for all terms it
+            # contains
+            terms = self.documents[doc_id].split(" ")
+            for term in terms:
+                if term not in InvertedIndex.stop_words:
+                    term = term.lower()
+                    self.index[term].remove(int(doc_id))
+                    # If the postings list is now empty, remove it
+                    if not self.index[term]:
+                        del self.index[term]
+
+            # Remove the document from the document store
+            del self.documents[doc_id]
+            return True
+        else:
+            return False
 
 
     def load_from_file(self, file_name):
