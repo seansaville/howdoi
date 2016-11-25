@@ -1,3 +1,7 @@
+"""
+Module containing an implementation of an inverted index.
+"""
+
 import json
 
 class InvertedIndex(object):
