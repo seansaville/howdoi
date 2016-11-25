@@ -42,6 +42,7 @@ class InvertedIndex(object):
         terms = document.split(" ")
         terms.extend(extra_tags)
         for term in terms:
+            term = term.lower()
             if term not in self.index:
                 self.index[term] = []
             self.index[term].append(doc_id)
@@ -80,6 +81,7 @@ class InvertedIndex(object):
 
         postings_lists = []
         for tag in tags:
+            tag = tag.lower()
             if tag in self.index:
                 postings_lists.append(self.index[tag])
 
