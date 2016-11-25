@@ -9,16 +9,24 @@ terminal.
 """
 
 
-import sys
+import argparse
 
 from invertedindex import InvertedIndex
 
 
-def main(argv):
+def main():
+    parser = argparse.ArgumentParser(description="Searchable command-line "
+                                     "database designed for small pieces of "
+                                     "information (e.g. terminal commands)")
+    parser.add_argument("-a", "--add", action="store_true",
+                        help="insert the query text into the database instead")
+    parser.add_argument("TAGS", nargs="+", help="tags forming the query text")
+    args = parser.parse_args()
+
     index = InvertedIndex()
     index.load_file("howdoi.json")
 
-    query_tags = argv[1:]
+    query_tags = args.TAGS
 
     results = index.search(query_tags)
     if results:
@@ -31,4 +39,4 @@ def main(argv):
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
