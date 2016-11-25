@@ -8,6 +8,7 @@ terminal.
 """
 
 import json
+import sys
 
 
 class InvertedIndex(object):
@@ -22,6 +23,8 @@ class InvertedIndex(object):
 
         term_dict - a dictionary mapping document IDs to the documents
                     themselves
+
+        next_doc_id - the next available document ID
         """
 
         self.index = {}
@@ -71,3 +74,44 @@ class InvertedIndex(object):
             out_dict['term_dict'] = json.dumps(self.term_dict)
             out_dict['next_doc_id'] = json.dumps(self.next_doc_id)
             output_file.write(json.dumps(out_dict))
+
+
+    def search(self, tags):
+        """
+        Naive search. Finds the postings list for each tag and intersects them,
+        returning the IDs of the documents that are in all of the lists.
+        """
+
+        postings_lists = []
+        for tag in tags:
+            if tag in self.index:
+                postings_lists.append(self.index[tag])
+
+        if not postings_lists:
+            return []
+
+        matches = set(postings_lists[0])
+        for postings_list in postings_lists:
+            matches = matches.intersection(postings_list)
+
+        return matches
+
+
+def main(argv):
+    index = InvertedIndex()
+    index.load_file("howdoi.json")
+
+    query_tags = argv[1:]
+
+    results = index.search(query_tags)
+    if results:
+        for result in results:
+            # The term dictionary is keyed by integers, but the JSON serialiser
+            # converts these to strings, so treat each document ID as a string.
+            print(index.term_dict[str(result)])
+    else:
+        print("Couldn't find anything matching those tags!")
+
+
+if __name__ == "__main__":
+    main(sys.argv)
