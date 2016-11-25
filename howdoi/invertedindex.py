@@ -9,6 +9,17 @@ class InvertedIndex(object):
     Inverted Index data structure.
     """
 
+    """
+    Words with no significant meaning in search queries which we therefore don't
+    store in an inverted index.
+    """
+    stop_words = [
+        'i', 'a', 'about', 'an', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
+        'how', 'in', 'is', 'it', 'of', 'on', 'or', 'that', 'the', 'this', 'to',
+        'was', 'what', 'when', 'where', 'which', 'who', 'will', 'with'
+    ]
+
+
     def __init__(self):
         """
         index - a dictionary of postings lists (mappings of a term to the IDs of
@@ -42,10 +53,11 @@ class InvertedIndex(object):
         terms = document.split(" ")
         terms.extend(extra_tags)
         for term in terms:
-            term = term.lower()
-            if term not in self.index:
-                self.index[term] = []
-            self.index[term].append(doc_id)
+            if term not in InvertedIndex.stop_words:
+                term = term.lower()
+                if term not in self.index:
+                    self.index[term] = []
+                self.index[term].append(doc_id)
 
 
     def load_from_file(self, file_name):
