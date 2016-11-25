@@ -25,13 +25,21 @@ def add(index, tags):
 
     print("I'm going to add \"{}\" to the database.".format(document))
     print("Type some additional tags for this item (separated by spaces). "
-          "Hit Enter to skip, or use ^C to cancel adding this item:")
+          "Hit Enter to skip, or type ! to cancel adding this item:")
 
     # Strip newline characters from the line before we split it into tags
     extra_tags = stdin.readline().replace("\r", "").replace("\n", "").split(" ")
 
-    index.add_document(document, extra_tags)
-    index.save_to_file("howdoi.json")
+    if "!" not in extra_tags:
+        if "" not in extra_tags:
+            index.add_document(document, extra_tags)
+        else:
+            index.add_document(document, [])
+
+        index.save_to_file("howdoi.json")
+        print("Command added and database updated.")
+    else:
+        print("Nothing was changed.")
 
 
 def search(index, tags):
@@ -42,9 +50,8 @@ def search(index, tags):
     results = index.search(tags)
     if results:
         for result in results:
-            # The term dictionary is keyed by integers, but the JSON
-            # serialiser converts these to strings, so treat each document
-            # ID as a string.
+            # The term dictionary is keyed by integers, but the JSON serialiser
+            # converts these to strings, so treat each document ID as a string.
             print(index.documents[str(result)])
     else:
         print("Couldn't find anything matching those tags!")
