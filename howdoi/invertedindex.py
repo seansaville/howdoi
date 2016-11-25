@@ -25,9 +25,10 @@ class InvertedIndex(object):
         self.next_doc_id = 0
 
 
-    def add_document(self, document):
+    def add_document(self, document, extra_tags):
         """
-        Add a document to the inverted index.
+        Add a document to the inverted index. Tags it with each word in the
+        query, and optionally with the provided extra tags.
         """
 
         # Add the document to the document store mapping IDs to documents
@@ -35,16 +36,18 @@ class InvertedIndex(object):
         self.documents[doc_id] = document
         self.next_doc_id += 1
 
-        # Add each term to the postings list for that term (and create one if
-        # it doesn't exist)
+        # Add each occurrence of a term to its postings list (and create a list
+        # if it doesn't exist). Treat the extra tags as if they were just
+        # additional terms.
         terms = document.split(" ")
+        terms.extend(extra_tags)
         for term in terms:
             if term not in self.index:
                 self.index[term] = []
             self.index[term].append(doc_id)
 
 
-    def load_file(self, file_name):
+    def load_from_file(self, file_name):
         """
         Load an inverted index from a file.
         """
@@ -56,7 +59,7 @@ class InvertedIndex(object):
             self.next_doc_id = json.loads(in_dict['next_doc_id'])
 
 
-    def save_file(self, file_name):
+    def save_to_file(self, file_name):
         """
         Save the contents of this inverted index to a file.
         """
