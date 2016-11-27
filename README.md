@@ -1,9 +1,5 @@
 # howdoi
 
-Searchable command-line database for small bits of information.
-
-# What does it do?
-
 Do you waste time looking up huge terminal commands that you use on a regular
 basis (and are just different enough each time that you can't simply alias
 them)? Maybe there's some things you'd just like to remind yourself about while
