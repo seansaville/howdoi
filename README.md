@@ -26,7 +26,7 @@ It's that easy!
 
 # howdoi use it?
 
-**howdoi** is really easy to use. There's only 2 important commands:
+**howdoi** is really easy to use. There are only 2 important commands:
 
 ```
 howdoi -a your awesome bit of information
