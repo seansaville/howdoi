@@ -18,6 +18,11 @@ repository, then put an alias in your `.bashrc` file:
 alias howdoi='/location/of/howdoi.py'
 ```
 
+Then change the line `DB_FILE_NAME = "db.howdoi"` to an absolute path to your
+desired database storage location, e.g. `DB_FILE_NAME = "/home/sean/db.howdoi"`.
+Failing to do this will cause a new database to be created every time you run
+the program from a different directory.
+
 It's that easy!
 
 # howdoi use it?
