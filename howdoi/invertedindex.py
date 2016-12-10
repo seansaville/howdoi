@@ -28,11 +28,15 @@ class InvertedIndex(object):
         documents - a dictionary mapping document IDs to the documents
                     themselves
 
+        custom_tags - a dictionary mapping document IDs to their custom
+                      (user-provided) search tags
+
         next_doc_id - the next available document ID
         """
 
         self.index = {}
         self.documents = {}
+        self.custom_tags = {}
         self.next_doc_id = 0
 
 
@@ -53,6 +57,7 @@ class InvertedIndex(object):
         if not custom_tags:
             terms = document.split(" ")
         else:
+            self.custom_tags[doc_id] = custom_tags
             terms = custom_tags
 
         for term in terms:
@@ -72,8 +77,11 @@ class InvertedIndex(object):
 
         if doc_id in self.documents:
             # Remove the document ID from the postings list for all terms it
-            # contains
-            terms = self.documents[doc_id].split(" ")
+            # contains or is tagged with
+            if doc_id in self.custom_tags:
+                terms = self.custom_tags[doc_id]
+            else:
+                terms = self.documents[doc_id].split(" ")
             for term in terms:
                 if term not in InvertedIndex.stop_words:
                     term = term.lower()
@@ -98,6 +106,7 @@ class InvertedIndex(object):
             in_dict = json.loads(input_file.readline())
             self.index = json.loads(in_dict['index'])
             self.documents = json.loads(in_dict['documents'])
+            self.custom_tags = json.loads(in_dict['custom_tags'])
             self.next_doc_id = json.loads(in_dict['next_doc_id'])
 
 
@@ -110,6 +119,7 @@ class InvertedIndex(object):
             out_dict = {}
             out_dict['index'] = json.dumps(self.index)
             out_dict['documents'] = json.dumps(self.documents)
+            out_dict['custom_tags'] = json.dumps(self.custom_tags)
             out_dict['next_doc_id'] = json.dumps(self.next_doc_id)
             output_file.write(json.dumps(out_dict))
 
