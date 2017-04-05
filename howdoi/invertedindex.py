@@ -2,7 +2,7 @@
 Module containing an implementation of an inverted index.
 """
 
-import json
+import json, os
 
 class InvertedIndex(object):
     """
@@ -114,6 +114,9 @@ class InvertedIndex(object):
         """
         Save the contents of this inverted index to a file.
         """
+
+        if os.path.dirname(file_name):
+            os.makedirs(os.path.dirname(file_name), exist_ok=True)
 
         with open(file_name, 'w') as output_file:
             out_dict = {}
